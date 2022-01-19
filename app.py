@@ -1,36 +1,22 @@
 from cgitb import text
 from typing import TextIO
 import nltk
-#Descarga un libro de inglés que ya viene tokenizado
-nltk.download('book')
-#Realiza la importación luego de haberlo descargado
-from nltk.book import *
 import matplotlib.pyplot as plt
 import numpy as np
-#Text1 Output = <Text: Moby Dick by Herman Melville 1851>
-#Obtenemos tokenizado las primeras palabras partiendo de la descarga de ntlk
-text1.tokens[:20]
-print(text1)
-#Para obtener los valores de la formula de la fig. 1. 
-# Podemos utilizar la función set
-#vocabulario = set(text1)
-#print(vocabulario)
-#La función set retorna un diccionario
-#por lo que para convertirlo en lista y poder usar la fun len()
-def get_riqueza_lexica(texto):
-    vocabulario = sorted(set(texto))
-    long_vocabulario = len(vocabulario)
-    long_texto = len(texto)
-    riqueza_lexica = long_vocabulario/long_texto
-    return riqueza_lexica
+from nltk.book import FreqDist
 
-#Otra variable importante es porcentaje de palabra
-def porcentaje_palabra(palabra, texto):
-    return 100*texto.count(palabra)/len(texto)
+pattern = r'''(?x)                  # Flag para iniciar el modo verbose
+              (?:[A-Z]\.)+            # Hace match con abreviaciones como U.S.A.
+              | \w+(?:-\w+)*         # Hace match con palabras que pueden tener un guión interno
+              | \$?\d+(?:\.\d+)?%?  # Hace match con dinero o porcentajes como $15.5 o 100%
+              | \.\.\.              # Hace match con puntos suspensivos
+              | [][.,;"'?():-_`]    # Hace match con signos de puntuación
+'''
 
-#Se obtiene la riqueza léxica del text1
-rlexica_txt1 = get_riqueza_lexica(text1)
-print(rlexica_txt1)
-#Se calcula el porcentaje de la palabra monster
-monster_porcent = porcentaje_palabra('monster', text1)
-print(monster_porcent)
+text_file = open("testing1.txt", "r", encoding="utf8")
+data = text_file.read()
+text_file.close()
+texto_tokenizado = nltk.regexp_tokenize(data, pattern)
+fdist_texto = FreqDist(texto_tokenizado)
+palabras_mas_usadas = fdist_texto.most_common(100)
+print(palabras_mas_usadas)
